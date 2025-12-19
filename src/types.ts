@@ -15,5 +15,6 @@ export interface GameState {
   album: Album | null;
   guesses: Guess[];
   isComplete: boolean;
+  isWon: boolean;
   attempts: number;
 }

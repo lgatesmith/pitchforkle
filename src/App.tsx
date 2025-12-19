@@ -10,7 +10,7 @@ function App() {
   const { gameState, handleGuess, handleReset } = useGameLogic(
     SAMPLE_ALBUMS[0]
   );
-  const { album, guesses, isComplete, attempts } = gameState;
+  const { album, guesses, isComplete, isWon, attempts } = gameState;
 
   if (!album) return null;
 
@@ -34,12 +34,20 @@ function App() {
               </>
             ) : (
               <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-700">
-                <div className="w-[140px] h-[140px] rounded-full border-[7px] border-green-500 flex items-center justify-center shadow-lg shadow-green-500/20">
-                  <span className="text-5xl font-extrabold text-green-500">
+                <div className={`w-[140px] h-[140px] rounded-full border-[7px] flex items-center justify-center shadow-lg ${
+                  isWon
+                    ? "border-green-500 shadow-green-500/20"
+                    : "border-red-500 shadow-red-500/20"
+                }`}>
+                  <span className={`text-5xl font-extrabold ${
+                    isWon ? "text-green-500" : "text-red-500"
+                  }`}>
                     {album.rating.toFixed(1)}
                   </span>
                 </div>
-                <h2 className="text-2xl font-semibold">Correct!</h2>
+                <h2 className="text-2xl font-semibold">
+                  {isWon ? "Correct!" : "Game Over!"}
+                </h2>
                 <Badge variant="outline" className="text-base">
                   {attempts} {attempts === 1 ? "attempt" : "attempts"}
                 </Badge>
