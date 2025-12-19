@@ -21,7 +21,7 @@ export const useGameLogic = (initialAlbum: Album) => {
     };
 
     const newGuesses = [...gameState.guesses, newGuess];
-    const isWon = Math.abs(difference) < RATING_TOLERANCE;
+    const isWon = Math.abs(difference) <= RATING_TOLERANCE;
     const isComplete = isWon || newGuesses.length >= MAX_GUESSES;
 
     setGameState({
