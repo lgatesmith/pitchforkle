@@ -31,7 +31,7 @@ npm run preview
 1. View an album cover
 2. Guess the Pitchfork rating (0.0 - 10.0)
 3. Get feedback on how close you are
-4. Try to guess the exact rating in as few attempts as possible!
+4. You have three guesses to get it right!
 
 ## Tech Stack
 
