@@ -1,18 +1,63 @@
+import { useState, useEffect } from "react";
 import AlbumCover from "@/components/AlbumCover";
 import GuessInput from "@/components/GuessInput";
 import FeedbackDisplay from "@/components/FeedbackDisplay";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ErrorMessage from "@/components/ErrorMessage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGameLogic } from "@/hooks/useGameLogic";
-import { SAMPLE_ALBUMS } from "@/data/albums";
+import { getRandomAlbum } from "@/services/album-service";
+import type { Album } from "@/types";
 
 function App() {
-  const { gameState, handleGuess, handleReset } = useGameLogic(
-    SAMPLE_ALBUMS[0]
-  );
-  const { album, guesses, isComplete, isWon, attempts } = gameState;
+  const [album, setAlbum] = useState<Album | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!album) return null;
+  // Function to load a new album
+  const loadAlbum = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedAlbum = await getRandomAlbum();
+      setAlbum(fetchedAlbum);
+    } catch (err) {
+      console.error('Failed to load album:', err);
+      setError('Failed to load album. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load initial album on mount
+  useEffect(() => {
+    loadAlbum();
+  }, []);
+
+  const { gameState, handleGuess, handleReset } = useGameLogic(album);
+  const { guesses, isComplete, isWon, attempts } = gameState;
+
+  // Handle play again - reset game and load new album
+  const handlePlayAgain = () => {
+    handleReset();
+    loadAlbum();
+  };
+
+  // Show loading state
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  // Show error state
+  if (error || !album) {
+    return (
+      <ErrorMessage
+        message={error || 'Album not found'}
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -58,7 +103,7 @@ function App() {
 
         {isComplete && (
           <Button
-            onClick={handleReset}
+            onClick={handlePlayAgain}
             className="bg-brand-black hover:bg-brand-black/90 text-white uppercase tracking-wide"
             size="lg"
           >
