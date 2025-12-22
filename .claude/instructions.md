@@ -20,6 +20,21 @@ When making any architectural decisions for this project, always consider:
 - **shadcn/ui patterns** - Components are copied into the codebase and fully customizable
 - **Tailwind CSS** - Utility-first styling with CSS variables for theming
 
+## Documentation Practices
+
+**Always update the README when making feature changes:**
+- When adding new features, update the README.md to document them
+- When updating existing features (like game mechanics), update the "How to Play" section
+- Keep the README in sync with the actual functionality of the app
+- Document any changes to game rules, scoring, or user interaction
+
+## Git Commit Guidelines
+
+**Never commit code proactively:**
+- After making changes, ask the user if they are ready to commit
+- Provide a brief, concise 1-line commit message suggestion
+- Wait for user confirmation before committing
+
 ## Project Overview
 
 Pitchforkle is a daily music game where players guess Pitchfork ratings from album covers alone.
