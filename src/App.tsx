@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AlbumCover from "@/components/AlbumCover";
 import GuessInput from "@/components/GuessInput";
 import FeedbackDisplay from "@/components/FeedbackDisplay";
 import LoadingSpinner from "@/components/LoadingSpinner";
