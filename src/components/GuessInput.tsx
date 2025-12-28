@@ -31,7 +31,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center">
-      <div className="w-[140px] h-[140px] rounded-full border-[7px] border-brand-black flex items-center justify-center transition-all hover:border-primary focus-within:border-primary focus-within:shadow-lg focus-within:shadow-primary/20">
+      <div className="w-[140px] h-[140px] rounded-full border-[7px] border-brand-black flex items-center justify-center transition-all hover:border-primary focus-within:border-primary">
         <input
           type="number"
           step={RATING_STEP}
