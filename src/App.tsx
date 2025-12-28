@@ -93,7 +93,7 @@ function App() {
                 <h2 className="text-2xl font-semibold">
                   {isWon ? "Correct!" : "Game Over!"}
                 </h2>
-                <Badge variant="outline" className="text-base">
+                <Badge variant="pill">
                   {attempts} {attempts === 1 ? "attempt" : "attempts"}
                 </Badge>
               </div>
@@ -104,8 +104,6 @@ function App() {
         {isComplete && (
           <Button
             onClick={handlePlayAgain}
-            className="bg-brand-black hover:bg-brand-black/90 text-white uppercase tracking-wide"
-            size="lg"
           >
             Play Again
           </Button>

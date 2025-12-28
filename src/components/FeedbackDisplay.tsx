@@ -17,7 +17,7 @@ export default function FeedbackDisplay({ guesses }: FeedbackDisplayProps) {
       <p className="text-lg font-medium text-foreground uppercase mb-2 relative after:content-[''] after:block after:w-[50px] after:h-[1px] after:bg-[rgb(204,204,204)] after:mx-auto after:mt-2">
         {feedbackText}
       </p>
-      <Badge variant="outline" className="text-sm">
+      <Badge variant="pill">
         {guesses.length} {guesses.length === 1 ? 'attempt' : 'attempts'}
       </Badge>
     </div>

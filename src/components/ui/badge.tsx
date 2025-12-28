@@ -17,6 +17,8 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        pill:
+          "border-transparent bg-black/10 text-black rounded-[1.5rem] uppercase tracking-[0.06875em] font-semibold leading-[1.33333em] px-6 py-3 transition-[background-color,color,border] duration-250 [a&]:hover:bg-black/20 [a&]:hover:border-2 [a&]:hover:border-brand-black",
       },
     },
     defaultVariants: {

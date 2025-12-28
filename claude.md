@@ -116,6 +116,41 @@ Wait for confirmation before committing.
 - Leverage Vite's fast HMR - don't fight it
 - shadcn components: extend via composition, don't modify source
 
+### Styling Architecture
+
+**⚠️ Update this section if layout/styling configuration changes**
+
+**Primary Styling Location:**
+- **`src/styles.css`** - Main CSS file containing:
+  - Global CSS variables (colors, spacing, radii)
+  - Tailwind theme configuration via `@theme inline`
+  - Base styles for all elements
+
+**CSS Variables** (defined in `:root`):
+- `--brand-black`: rgb(26, 26, 26)
+- `--success-green`: rgb(34, 197, 94)
+- `--background`: #ffffff
+- `--foreground`: rgb(26, 26, 26)
+- `--border`: rgb(204, 204, 204)
+- `--ring`: rgb(26, 26, 26)
+- `--radius`: 0.625rem
+
+**Component Styling Locations:**
+- **shadcn/ui components** in `src/components/ui/`:
+  - `button.tsx` - Button variants and styles
+  - `badge.tsx` - Badge component styles
+  - `input.tsx` - Input field styles
+  - Styled using Tailwind utilities + CSS variables
+
+- **Custom game components** in `src/components/`:
+  - `AlbumCover.tsx`, `GuessInput.tsx`, `FeedbackDisplay.tsx`, etc.
+  - Styled with inline Tailwind classes
+
+**Styling Workflow:**
+1. Define colors/spacing as CSS variables in `src/styles.css`
+2. Use Tailwind utilities that reference those variables
+3. For new shadcn components: user runs `npx shadcn@latest add <component>`
+
 ### Game Context
 
 Pitchforkle is a daily music game where players guess Pitchfork ratings from album covers alone.
