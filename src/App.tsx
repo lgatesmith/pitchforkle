@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { getRandomAlbum } from "@/services/album-service";
+import { MAX_GUESSES } from "@/constants/game";
 import type { Album } from "@/types";
 
 function App() {
@@ -23,8 +24,8 @@ function App() {
       const fetchedAlbum = await getRandomAlbum();
       setAlbum(fetchedAlbum);
     } catch (err) {
-      console.error('Failed to load album:', err);
-      setError('Failed to load album. Please try again.');
+      console.error("Failed to load album:", err);
+      setError("Failed to load album. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -37,6 +38,7 @@ function App() {
 
   const { gameState, handleGuess, handleReset } = useGameLogic(album);
   const { guesses, isComplete, isWon, attempts } = gameState;
+  const guessesRemaining = MAX_GUESSES - attempts;
 
   // Handle play again - reset game and load new album
   const handlePlayAgain = () => {
@@ -53,7 +55,7 @@ function App() {
   if (error || !album) {
     return (
       <ErrorMessage
-        message={error || 'Album not found'}
+        message={error || "Album not found"}
         onRetry={() => window.location.reload()}
       />
     );
@@ -65,49 +67,103 @@ function App() {
         <h1 className="text-2xl font-semibold tracking-wide">PITCHFORKLE</h1>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-8 bg-background text-foreground gap-[5vw]">
-        <div className="flex gap-8 items-center max-md:flex-col">
-          <div className="flex justify-center items-center">
-            <AlbumCover album={album} showDetails={isComplete} />
-          </div>
-
-          <div className="flex flex-col justify-center items-center min-w-[200px]">
-            {!isComplete ? (
-              <>
-                <GuessInput onGuess={handleGuess} disabled={isComplete} />
-                <FeedbackDisplay guesses={guesses} />
-              </>
-            ) : (
-              <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-700">
-                <div className={`w-[140px] h-[140px] rounded-full border-[7px] flex items-center justify-center shadow-lg ${
-                  isWon
-                    ? "border-green-500 shadow-green-500/20"
-                    : "border-red-500 shadow-red-500/20"
-                }`}>
-                  <span className={`text-5xl font-extrabold ${
-                    isWon ? "text-green-500" : "text-red-500"
-                  }`}>
-                    {album.rating.toFixed(1)}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-semibold">
-                  {isWon ? "Correct!" : "Game Over!"}
+      <main className="flex-1 flex flex-col items-center justify-center p-8 bg-background text-foreground">
+        <div
+          className={`w-full max-w-7xl border-b border-[#eeeeee] pb-[5vh] ${
+            isComplete
+              ? "grid grid-cols-2 gap-8 items-center max-md:grid-cols-1"
+              : ""
+          }`}
+        >
+          {/* Left column - Album title/artist text (only shows when complete) */}
+          {isComplete && (
+            <div className="flex justify-center items-center">
+              <div
+                className="max-w-[500px] flex flex-col items-center gap-8 animate-in fade-in duration-500"
+                style={{ textAlign: "center" }}
+              >
+                <h2
+                  className="text-brand-black superior-title-700-italic"
+                  style={{ fontSize: "48px", lineHeight: "1.16667em" }}
+                >
+                  {album.title}
                 </h2>
-                <Badge variant="pill">
-                  {attempts} {attempts === 1 ? "attempt" : "attempts"}
-                </Badge>
+                <p
+                  className="text-brand-black uppercase underline"
+                  style={{ fontSize: "28px" }}
+                >
+                  {album.artist}
+                </p>
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Right column - Album cover + guess input */}
+          <div
+            className={
+              isComplete ? "" : "flex justify-center items-center w-full"
+            }
+          >
+            <div className="flex gap-8 items-center max-md:flex-col">
+              <div className="flex justify-center items-center">
+                <img
+                  src={album.coverUrl}
+                  alt={`${album.artist} - ${album.title}`}
+                  className="w-[312px] aspect-square object-cover rounded-sm shadow-md transition-transform hover:scale-[1.02]"
+                />
+              </div>
+
+              <div className="flex flex-col justify-center items-center min-w-[200px]">
+                {!isComplete ? (
+                  <>
+                    <GuessInput onGuess={handleGuess} disabled={isComplete} />
+                    <FeedbackDisplay guesses={guesses} />
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-700">
+                    <div
+                      className={`w-[140px] h-[140px] rounded-full border-[7px] flex items-center justify-center shadow-lg ${
+                        isWon
+                          ? "border-green-500 shadow-green-500/20"
+                          : "border-red-500 shadow-red-500/20"
+                      }`}
+                    >
+                      <span
+                        className={`text-5xl font-extrabold ${
+                          isWon ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {album.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        {isComplete && (
-          <Button
-            onClick={handlePlayAgain}
-          >
-            Play Again
-          </Button>
-        )}
+        {/* Bottom section - Game status and play again button */}
+        <div className="flex flex-col items-center gap-4 pt-[5vh]">
+          {isComplete && (
+            <h2 className="text-brand-black font-semibold uppercase">
+              {isWon ? "Correct!" : "Game Over!"}
+            </h2>
+          )}
+          {!isComplete ? (
+            <Badge variant="pill">
+              {guessesRemaining} {guessesRemaining === 1 ? "guess" : "guesses"}{" "}
+              remaining
+            </Badge>
+          ) : (
+            isWon && (
+              <p className="text-brand-black">
+                Got it in {attempts} {attempts === 1 ? "attempt" : "attempts"}
+              </p>
+            )
+          )}
+          {isComplete && <Button onClick={handlePlayAgain}>Play Again</Button>}
+        </div>
       </main>
     </div>
   );
