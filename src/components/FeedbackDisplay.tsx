@@ -1,5 +1,5 @@
-import type { Guess } from '@/types';
-import { getFeedbackText } from '@/utils/feedback';
+import type { Guess } from "@/types";
+import { getFeedbackText } from "@/utils/feedback";
 
 interface FeedbackDisplayProps {
   guesses: Guess[];
@@ -12,8 +12,8 @@ export default function FeedbackDisplay({ guesses }: FeedbackDisplayProps) {
   const feedbackText = getFeedbackText(lastGuess.difference);
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-8">
-      <p className="text-lg font-medium text-foreground uppercase mb-2 relative after:content-[''] after:block after:w-[50px] after:h-[1px] after:bg-[rgb(204,204,204)] after:mx-auto after:mt-2">
+    <div className="flex flex-col items-center mt-6">
+      <p className="text-lg font-medium text-foreground uppercase relative before:content-[''] before:block before:w-[50px] before:h-[1px] before:bg-[rgb(204,204,204)] before:mx-auto before:mb-4">
         {feedbackText}
       </p>
     </div>
