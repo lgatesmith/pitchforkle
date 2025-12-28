@@ -93,6 +93,9 @@ function App() {
                 >
                   {album.artist}
                 </p>
+                {album.year && (
+                  <p className="text-brand-black text-sm mt-2">{album.year}</p>
+                )}
               </div>
             </div>
           )}
@@ -121,10 +124,8 @@ function App() {
                 ) : (
                   <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-700">
                     <div
-                      className={`w-[140px] h-[140px] rounded-full border-[7px] flex items-center justify-center shadow-lg ${
-                        isWon
-                          ? "border-green-500 shadow-green-500/20"
-                          : "border-red-500 shadow-red-500/20"
+                      className={`w-[140px] h-[140px] rounded-full border-[7px] flex items-center justify-center ${
+                        isWon ? "border-green-500" : "border-red-500"
                       }`}
                     >
                       <span

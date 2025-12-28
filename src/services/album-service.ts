@@ -12,6 +12,7 @@ function transformAlbum(row: any): Album {
     artist: row.artist_name,
     coverUrl: row.full_photo_url,
     rating: parseFloat(row.rating),
+    year: row.release_date,
   };
 }
 

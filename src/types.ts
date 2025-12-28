@@ -4,6 +4,7 @@ export interface Album {
   artist: string;
   coverUrl: string;
   rating: number;
+  year?: string;
 }
 
 export interface Guess {
