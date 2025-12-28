@@ -17,7 +17,7 @@ export default function AlbumCover({
           style={{ textAlign: "center" }}
         >
           <h2
-            className="text-brand-black font-serif font-bold"
+            className="text-brand-black superior-title-700-italic"
             style={{ fontSize: "48px", lineHeight: "1.16667em" }}
           >
             {album.title}
