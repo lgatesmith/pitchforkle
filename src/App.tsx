@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import GuessInput from "@/components/GuessInput";
 import FeedbackDisplay from "@/components/FeedbackDisplay";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -8,7 +8,7 @@ import ErrorMessage from "@/components/ErrorMessage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGameStore } from "@/store/gameStore";
-import { getRandomAlbum } from "@/services/album-service";
+import { getDailyAlbum } from "@/services/album-service";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -32,20 +32,16 @@ function App() {
     try {
       setLoading(true);
       setError(null);
-      const fetched = await getRandomAlbum();
+      const fetched = await getDailyAlbum();
       setAlbum(fetched);
       startGame();
     } catch (err) {
       console.error("Failed to load album:", err);
-      setError("Failed to load album. Please try again.");
+      setError("No puzzle scheduled for today. Check back tomorrow!");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadAlbum();
-  }, []);
 
   const handlePlayAgain = () => {
     resetGame();

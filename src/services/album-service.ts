@@ -1,13 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import type { Album } from "@/types";
 
-/**
- * Transform database row to Album type
- * Maps CSV column names to app's Album interface
- */
 function transformAlbum(row: any): Album {
   return {
-    id: String(row.id), // Convert numeric ID to string
+    id: String(row.id),
     title: row.album_name,
     artist: row.artist_name,
     coverUrl: row.full_photo_url,
@@ -17,29 +13,33 @@ function transformAlbum(row: any): Album {
 }
 
 /**
- * Fetch a random album from Supabase
- * Generates a random ID between 1-96 and fetches that album
+ * Fetch today's daily puzzle album
+ * Queries the daily_puzzles table by today's date and joins to albums
  */
-export async function getRandomAlbum(): Promise<Album> {
-  // Generate random ID between 1 and 96
-  const randomId = Math.floor(Math.random() * 96) + 1;
+export async function getDailyAlbum(): Promise<Album> {
+  const today = new Date().toISOString().split("T")[0]; // 'YYYY-MM-DD'
 
   const { data, error } = await supabase
-    .from("albums")
-    .select("*")
-    .eq("id", randomId)
+    .from("daily_puzzles")
+    .select(
+      `
+      scheduled_date,
+      albums (*)
+    `,
+    )
+    .eq("scheduled_date", today)
     .single();
 
   if (error) {
-    console.error("Error fetching album:", error);
-    throw new Error("Failed to fetch album from database");
+    console.error("Error fetching daily album:", error);
+    throw new Error("No puzzle scheduled for today");
   }
 
-  if (!data) {
-    throw new Error("No album found in database");
+  if (!data || !data.albums) {
+    throw new Error("No puzzle scheduled for today");
   }
 
-  return transformAlbum(data);
+  return transformAlbum(data.albums);
 }
 
 /**
