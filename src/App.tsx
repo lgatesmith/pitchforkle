@@ -1,27 +1,40 @@
-import { useState, useEffect } from "react";
+// src/App.tsx
+
+import { useEffect, useState } from "react";
 import GuessInput from "@/components/GuessInput";
 import FeedbackDisplay from "@/components/FeedbackDisplay";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorMessage from "@/components/ErrorMessage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useGameLogic } from "@/hooks/useGameLogic";
+import { useGameStore } from "@/store/gameStore";
 import { getRandomAlbum } from "@/services/album-service";
-import { MAX_GUESSES } from "@/constants/game";
-import type { Album } from "@/types";
 
 function App() {
-  const [album, setAlbum] = useState<Album | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to load a new album
+  const {
+    album,
+    guesses,
+    gamePhase,
+    isWon,
+    score,
+    scoreCeiling,
+    guessesLeft,
+    setAlbum,
+    startGame,
+    submitGuess,
+    resetGame,
+  } = useGameStore();
+
   const loadAlbum = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedAlbum = await getRandomAlbum();
-      setAlbum(fetchedAlbum);
+      const fetched = await getRandomAlbum();
+      setAlbum(fetched);
+      startGame();
     } catch (err) {
       console.error("Failed to load album:", err);
       setError("Failed to load album. Please try again.");
@@ -30,27 +43,17 @@ function App() {
     }
   };
 
-  // Load initial album on mount
   useEffect(() => {
     loadAlbum();
   }, []);
 
-  const { gameState, handleGuess, handleReset } = useGameLogic(album);
-  const { guesses, isComplete, isWon, attempts } = gameState;
-  const guessesRemaining = MAX_GUESSES - attempts;
-
-  // Handle play again - reset game and load new album
   const handlePlayAgain = () => {
-    handleReset();
+    resetGame();
     loadAlbum();
   };
 
-  // Show loading state
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
-  // Show error state
   if (error || !album) {
     return (
       <ErrorMessage
@@ -59,6 +62,8 @@ function App() {
       />
     );
   }
+
+  const isComplete = gamePhase === "complete" || gamePhase === "revealed";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -74,7 +79,7 @@ function App() {
               : ""
           }`}
         >
-          {/* Left column - Album title/artist text (only shows when complete) */}
+          {/* Left column — album info (only when complete) */}
           {isComplete && (
             <div className="flex justify-center items-center">
               <div
@@ -100,13 +105,14 @@ function App() {
             </div>
           )}
 
-          {/* Right column - Album cover + guess input */}
+          {/* Right column — album cover + game */}
           <div
             className={
               isComplete ? "" : "flex justify-center items-center w-full"
             }
           >
             <div className="flex gap-8 items-center max-md:flex-col">
+              {/* Album cover */}
               <div className="flex justify-center items-center">
                 <img
                   src={album.coverUrl}
@@ -115,10 +121,14 @@ function App() {
                 />
               </div>
 
+              {/* Game area */}
               <div className="flex flex-col justify-center items-center min-w-[200px]">
                 {!isComplete ? (
                   <>
-                    <GuessInput onGuess={handleGuess} disabled={isComplete} />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Score ceiling: {scoreCeiling()}/10
+                    </p>
+                    <GuessInput onGuess={submitGuess} disabled={isComplete} />
                     <FeedbackDisplay guesses={guesses} />
                   </>
                 ) : (
@@ -129,13 +139,16 @@ function App() {
                       }`}
                     >
                       <span
-                        className={`text-5xl font-extrabold ${
-                          isWon ? "text-green-500" : "text-red-500"
-                        }`}
+                        className={`text-5xl font-extrabold ${isWon ? "text-green-500" : "text-red-500"}`}
                       >
                         {album.rating.toFixed(1)}
                       </span>
                     </div>
+                    {isWon && (
+                      <p className="text-brand-black font-semibold">
+                        {score}/10
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -143,7 +156,7 @@ function App() {
           </div>
         </div>
 
-        {/* Bottom section - Game status and play again button */}
+        {/* Bottom section */}
         <div className="flex flex-col items-center gap-4 pt-[5vh]">
           {isComplete && (
             <h2 className="text-brand-black font-semibold uppercase">
@@ -152,13 +165,14 @@ function App() {
           )}
           {!isComplete ? (
             <Badge variant="pill">
-              {guessesRemaining} {guessesRemaining === 1 ? "guess" : "guesses"}{" "}
+              {guessesLeft()} {guessesLeft() === 1 ? "guess" : "guesses"}{" "}
               remaining
             </Badge>
           ) : (
             isWon && (
               <p className="text-brand-black">
-                Got it in {attempts} {attempts === 1 ? "attempt" : "attempts"}
+                Got it in {guesses.length}{" "}
+                {guesses.length === 1 ? "attempt" : "attempts"}
               </p>
             )
           )}

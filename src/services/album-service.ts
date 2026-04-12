@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase';
-import type { Album } from '@/types';
+import { supabase } from "@/lib/supabase";
+import type { Album } from "@/types";
 
 /**
  * Transform database row to Album type
@@ -25,18 +25,18 @@ export async function getRandomAlbum(): Promise<Album> {
   const randomId = Math.floor(Math.random() * 96) + 1;
 
   const { data, error } = await supabase
-    .from('albums')
-    .select('*')
-    .eq('id', randomId)
+    .from("albums")
+    .select("*")
+    .eq("id", randomId)
     .single();
 
   if (error) {
-    console.error('Error fetching album:', error);
-    throw new Error('Failed to fetch album from database');
+    console.error("Error fetching album:", error);
+    throw new Error("Failed to fetch album from database");
   }
 
   if (!data) {
-    throw new Error('No album found in database');
+    throw new Error("No album found in database");
   }
 
   return transformAlbum(data);
@@ -47,14 +47,14 @@ export async function getRandomAlbum(): Promise<Album> {
  */
 export async function getAlbumById(id: number): Promise<Album> {
   const { data, error } = await supabase
-    .from('albums')
-    .select('*')
-    .eq('id', id)
+    .from("albums")
+    .select("*")
+    .eq("id", id)
     .single();
 
   if (error) {
     console.error(`Error fetching album ${id}:`, error);
-    throw new Error('Failed to fetch album');
+    throw new Error("Failed to fetch album");
   }
 
   if (!data) {
@@ -69,13 +69,13 @@ export async function getAlbumById(id: number): Promise<Album> {
  */
 export async function getAllAlbums(): Promise<Album[]> {
   const { data, error } = await supabase
-    .from('albums')
-    .select('*')
-    .order('id', { ascending: true });
+    .from("albums")
+    .select("*")
+    .order("id", { ascending: true });
 
   if (error) {
-    console.error('Error fetching albums:', error);
-    throw new Error('Failed to fetch albums');
+    console.error("Error fetching albums:", error);
+    throw new Error("Failed to fetch albums");
   }
 
   return data.map(transformAlbum);

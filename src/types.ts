@@ -5,6 +5,9 @@ export interface Album {
   coverUrl: string;
   rating: number;
   year?: string;
+  genre?: string;
+  reviewer?: string;
+  isBestNewMusic?: boolean;
 }
 
 export interface Guess {
@@ -12,10 +15,6 @@ export interface Guess {
   difference: number;
 }
 
-export interface GameState {
-  album: Album | null;
-  guesses: Guess[];
-  isComplete: boolean;
-  isWon: boolean;
-  attempts: number;
-}
+export type GamePhase = "idle" | "guessing" | "revealed" | "complete";
+
+export type UnlockType = "year" | "genre" | "reviewer" | "bestNewMusic";
